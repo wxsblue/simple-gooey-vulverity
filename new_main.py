@@ -86,7 +86,7 @@ def create_vul_poc():
 
 @Gooey(program_name="漏洞批量复测工具V1.0",
        default_size=(800,700), # 设置默认窗口大小
-       image_dir="E:\\project\\python\\hpz-1\\",
+       image_dir="xxx\",
        navigation="TABBED", # 创建选项卡式界面，分页显示
        header_bg_color='#3264a8',
        terminal_font_family='Consolas',# 设置字体
