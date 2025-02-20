@@ -10,7 +10,7 @@ requests.packages.urllib3.disable_warnings()
 RED = '\033[91m'
 RESET = '\033[0m'
 
-file_path = "D:\\KillThem\\渗透测试\\信息收集\\fofaHack2.txt"
+file_path = "xxx"
 
 def result_quchong():
     # 去重列表内容
