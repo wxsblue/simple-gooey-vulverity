@@ -86,7 +86,7 @@ def create_vul_poc():
 
 @Gooey(program_name="漏洞批量复测工具V1.0",
        default_size=(800,700), # 设置默认窗口大小
-       image_dir="xxx\",
+       image_dir="xxx",  # 图标文件所在目录,命名为config_icon.png
        navigation="TABBED", # 创建选项卡式界面，分页显示
        header_bg_color='#3264a8',
        terminal_font_family='Consolas',# 设置字体
@@ -105,7 +105,7 @@ def create_vul_poc():
        )
 def main():
     #定义fofa等搜索引擎结果文件位置，后续将fofa结果自动化实现
-    file_path = "D:\\xxx"
+    file_path = "D:xxx"
 
     # 设置fofa key
     key = 'xxxx'
