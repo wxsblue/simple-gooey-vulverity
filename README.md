@@ -9,7 +9,7 @@
 # 图标名称
   需使用PNG格式图片，命名为config_icon.png即可【这个网上检索说的都是错的，最后看官方文档找到的】
 
-当前post请求发包部分还未完成
+当前post请求发包部分已完成，因单独使用gooey装饰器获取post请求体（富文本）没成功，最后通过把请求头粘贴在文件中进行读取添加实现，本人比较菜
 
 运行界面如下
 ![image](https://github.com/user-attachments/assets/2492c03c-e036-472b-a861-4b6667e06780)
