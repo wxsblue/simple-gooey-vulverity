@@ -7,10 +7,12 @@ import multiprocessing
 from tqdm import tqdm
 from gooey import Gooey, GooeyParser
 
+
 requests.packages.urllib3.disable_warnings()
 
 RED = '\033[91m'
 RESET = '\033[0m'
+
 
 
 # ip+端口组合的列表去重
@@ -59,7 +61,16 @@ def get_req(url,ua,match1):
 
 
 # POST请求漏洞POC
-def post_req(url,ua,data,match2):
+def post_req(file,url,ua,match2):
+
+    # 读取请求体内容
+    # with open(file, 'r', encoding='utf-8') as f:
+        # content = f.read()
+        # print("文件内容如下：")
+        # print(content)
+
+    data = open(file, 'r', encoding='utf-8').read()
+
     # 发送POST请求
     try:
         # 发送 POST 请求
@@ -86,14 +97,23 @@ def create_vul_poc():
 
 @Gooey(program_name="漏洞批量复测工具V1.0",
        default_size=(800,700), # 设置默认窗口大小
-       image_dir="xxx",  # 图标文件所在目录,命名为config_icon.png
+       image_dir="E:\\project\\python\\simple-gooey-vulverity\\",
        navigation="TABBED", # 创建选项卡式界面，分页显示
        header_bg_color='#3264a8',
+       # body_bg_color='#323232',
        terminal_font_family='Consolas',# 设置字体
        # theme='dark',  # 暗色主题
        # styling={'terminal_font_color':'#FF0000',   # 文本颜色
        #          'terminal_panel_color':'#000000'}, # 背景颜色
        language='chinese',  # 设置界面语言
+
+        layout={
+           'margin_top': 50,
+           'margin_left': 150,
+           'margin_right': 150,
+           'margin_bottom': 100
+       },
+
 
        # 设置窗口位置
        window_position=(50, 100), # (左侧位置, 顶部位置)
@@ -105,10 +125,10 @@ def create_vul_poc():
        )
 def main():
     #定义fofa等搜索引擎结果文件位置，后续将fofa结果自动化实现
-    file_path = "D:xxx"
+    file_path = "D:\\xxx"
 
     # 设置fofa key
-    key = 'xxxx'
+    key = 'xxxxxxx'
     # 调用fofa sdk接口
     client = fofa.Client(key)
     # 设置查询条件
@@ -127,44 +147,53 @@ def main():
     parser.add_argument('--req_method', help='选择请求方法,默认GET，勾选则为POST',action='store_true',widget='CheckBox')
     parser.add_argument('--req_content_type', type=str, help='请求数据格式')
     # 单行用TextField，多行用Textarea
-    parser.add_argument('--post_data',help='输入请求体',widget='Textarea',required=False,
-                        gooey_options={
-                            'height': 300,  # 设置文本框高度
-                            'placeholder': "请输入您的文本内容..."
-                        }
-                        )
-
+    # parser.add_argument('--post_data',help='输入请求体',widget='Textarea',required=False,
+    #                     gooey_options={
+    #                         'height': 300,  # 设置文本框高度
+    #                         'placeholder': "请输入您的文本内容..."
+    #                     }
+    #                     )
+    parser.add_argument('--file', widget='FileChooser', help="选择一个 TXT 文件")
 
 
     #获取添加的参数
     args = parser.parse_args()
+
 
     print(f"漏洞批量复测GUI程序开始，查询参数为：{args.query_str}")
     print(f"佛法无边，回头是岸！！！")
     print(f"-----------------------------------------------------------------------")
     # 返回数据获取，默认为3项：host,ip,port
     # 其他项字段还有 *******
-    data = client.search(args.query_str, args.page, args.size, fields="ip,port,city")
-    # print(data)
 
-    post_data = args.post_data
-
+    # 存储结果进行打印
     final_result = []
-    for ip, port,city in data["results"]:
-        # print("%s:%s" % (ip, port))
-        req_url = "http://" + ip + ":" + port + args.extend_uri1
-        headers = {"User-Agent":get_request_headers(),"Content-Type":"args.req_content_type"}
-        if args.req_method == 0:
-            # 不勾选请求方法选项，则使用GET请求方法
-            match_url = get_req(req_url,headers,args.match1)
-            # print(match_url)
-            final_result.append(match_url)
-        else:
-            match_url = post_req(req_url,headers,post_data,args.match1)
-            final_result.append(match_url)
+
+    for page in range(1,args.page+1):  # 从第1页查到第page页
+        # fcoin = client.get_userinfo()["fcoin"]  # 查询F币剩余数量
+        # if fcoin <= 249:
+        #     break  # 当F币剩249个时，不再获取数据
+        data = client.search(args.query_str, page, args.size, fields="ip,port,city")
+        # print(data)
+
+
+
+        for ip, port,city in data["results"]:
+            # print("%s:%s" % (ip, port))
+            req_url = "http://" + ip + ":" + port + args.extend_uri1
+            headers = {"User-Agent":get_request_headers(),"Content-Type":args.req_content_type}
+            if args.req_method == 0:
+                # 不勾选请求方法选项，则使用GET请求方法
+                match_url = get_req(req_url,headers,args.match1)
+                # print(match_url)
+                final_result.append(match_url)
+            else:
+                match_url = post_req(args.file,req_url,headers,args.match1)
+                final_result.append(match_url)
 
     # 打印结果
     print(final_result)
+
 
 
 if __name__ == "__main__":
